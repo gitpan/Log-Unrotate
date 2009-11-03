@@ -1,13 +1,24 @@
-# http://module-build.sourceforge.net/META-spec.html
-#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
-name:         Log-Unrotate
-version:      1.03
-version_from: lib/Log/Unrotate.pm
-installdirs:  site
+--- #YAML:1.0
+name:               Log-Unrotate
+version:            1.04
+abstract:           Reader of rotated logs.
+author:
+    - Andrei Mishchenko <druxa@yandex-team.ru>, Vyacheslav Matjukhin <mmcleric@yandex-team.ru>
+license:            unknown
+distribution_type:  module
+configure_requires:
+    ExtUtils::MakeMaker:  0
+build_requires:
+    ExtUtils::MakeMaker:  0
 requires:
-    File::Temp:                    0.15
-    Test::Exception:               0
-    Test::More:                    0
-
-distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.30_01
+    File::Temp:       0.15
+    Test::Exception:  0
+    Test::More:       0
+no_index:
+    directory:
+        - t
+        - inc
+generated_by:       ExtUtils::MakeMaker version 6.54
+meta-spec:
+    url:      http://module-build.sourceforge.net/META-spec-v1.4.html
+    version:  1.4
