@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Log-Unrotate
-version:            1.04
+version:            1.05
 abstract:           Reader of rotated logs.
 author:
     - Andrei Mishchenko <druxa@yandex-team.ru>, Vyacheslav Matjukhin <mmcleric@yandex-team.ru>
