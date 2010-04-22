@@ -1,24 +1,25 @@
---- #YAML:1.0
-name:               Log-Unrotate
-version:            1.05
-abstract:           Reader of rotated logs.
+---
+name: Log-Unrotate
+version: 1.06
 author:
-    - Andrei Mishchenko <druxa@yandex-team.ru>, Vyacheslav Matjukhin <mmcleric@yandex-team.ru>
-license:            unknown
-distribution_type:  module
-configure_requires:
-    ExtUtils::MakeMaker:  0
-build_requires:
-    ExtUtils::MakeMaker:  0
+  - 'Andrei Mishchenko <druxa@yandex-team.ru>'
+  - 'Vyacheslav Matjukhin <mmcleric@yandex-team.ru>'
+abstract: Reader of rotated logs.
+license: perl
+resources:
+  license: http://dev.perl.org/licenses/
 requires:
-    File::Temp:       0.15
-    Test::Exception:  0
-    Test::More:       0
-no_index:
-    directory:
-        - t
-        - inc
-generated_by:       ExtUtils::MakeMaker version 6.54
+  File::Temp: 0.15
+  Module::Build: 0.2805
+  Test::More: 0
+build_requires:
+  Test::Exception: 0
+  Test::More: 0
+provides:
+  Log::Unrotate:
+    file: lib/Log/Unrotate.pm
+    version: 1.06
+generated_by: Module::Build version 0.2808
 meta-spec:
-    url:      http://module-build.sourceforge.net/META-spec-v1.4.html
-    version:  1.4
+  url: http://module-build.sourceforge.net/META-spec-v1.2.html
+  version: 1.2
