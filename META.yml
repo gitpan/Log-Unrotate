@@ -1,6 +1,6 @@
 ---
 name: Log-Unrotate
-version: 1.06
+version: 1.10
 author:
   - 'Andrei Mishchenko <druxa@yandex-team.ru>'
   - 'Vyacheslav Matjukhin <mmcleric@yandex-team.ru>'
@@ -18,7 +18,7 @@ build_requires:
 provides:
   Log::Unrotate:
     file: lib/Log/Unrotate.pm
-    version: 1.06
+    version: 1.10
 generated_by: Module::Build version 0.2808
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html
