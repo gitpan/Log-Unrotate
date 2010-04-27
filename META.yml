@@ -1,6 +1,6 @@
 ---
 name: Log-Unrotate
-version: 1.22
+version: 1.23
 author:
   - 'Andrei Mishchenko <druxa@yandex-team.ru>'
   - 'Vyacheslav Matjukhin <mmcleric@yandex-team.ru>'
@@ -15,10 +15,11 @@ requires:
 build_requires:
   Test::Exception: 0
   Test::More: 0
+  Test::NoWarnings: 0
 provides:
   Log::Unrotate:
     file: lib/Log/Unrotate.pm
-    version: 1.22
+    version: 1.23
   Log::Unrotate::Cursor:
     file: lib/Log/Unrotate/Cursor.pm
   Log::Unrotate::Cursor::File:
