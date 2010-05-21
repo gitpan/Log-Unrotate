@@ -1,44 +1,13 @@
-Log-Unrotate version 1.23
-===========================
-
-Incremental and transparent reader of rotating logs.
-
-INSTALLATION
-
-To install this module, run the following commands:
-
-	perl Build.PL
-	./Build
-	./Build test
-	./Build install
-
-SUPPORT AND DOCUMENTATION
-
-After installing, you can find documentation for this module with the
-perldoc command.
-
-    perldoc Log::Unrotate
-
-You can also look for information at:
-
-    RT, CPAN's request tracker
-        http://rt.cpan.org/NoAuth/Bugs.html?Dist=Log-Unrotate
-
-    AnnoCPAN, Annotated CPAN documentation
-        http://annocpan.org/dist/Log-Unrotate
-
-    CPAN Ratings
-        http://cpanratings.perl.org/d/Log-Unrotate
-
-    Search CPAN
-        http://search.cpan.org/dist/Log-Unrotate/
 
 
-COPYRIGHT AND LICENCE
+This archive contains the distribution Log-Unrotate,
+version 1.24:
 
-Copyright (c) 2006-2010 Yandex LTD. All rights reserved.
+  Reader of rotated logs.
 
-This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+This software is copyright (c) 2010 by Yandex LLC.
 
-See <http://www.perl.com/perl/misc/Artistic.html>
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
 

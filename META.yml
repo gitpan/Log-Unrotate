@@ -1,32 +1,32 @@
 ---
-name: Log-Unrotate
-version: 1.23
+abstract: 'Reader of rotated logs.'
 author:
   - 'Andrei Mishchenko <druxa@yandex-team.ru>'
   - 'Vyacheslav Matjukhin <mmcleric@yandex-team.ru>'
-abstract: Reader of rotated logs.
-license: perl
-resources:
-  license: http://dev.perl.org/licenses/
-requires:
-  File::Temp: 0.15
-  Module::Build: 0.2805
-  Test::More: 0
 build_requires:
+  Exporter: 0
+  File::Copy: 0
+  File::Path: 0
   Test::Exception: 0
   Test::More: 0
   Test::NoWarnings: 0
-provides:
-  Log::Unrotate:
-    file: lib/Log/Unrotate.pm
-    version: 1.23
-  Log::Unrotate::Cursor:
-    file: lib/Log/Unrotate/Cursor.pm
-  Log::Unrotate::Cursor::File:
-    file: lib/Log/Unrotate/Cursor/File.pm
-  Log::Unrotate::Cursor::Null:
-    file: lib/Log/Unrotate/Cursor/Null.pm
-generated_by: Module::Build version 0.2808
+configure_requires:
+  ExtUtils::MakeMaker: 6.31
+generated_by: 'Dist::Zilla version 2.101310'
+license: perl
 meta-spec:
-  url: http://module-build.sourceforge.net/META-spec-v1.2.html
-  version: 1.2
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Log-Unrotate
+recommends: {}
+requires:
+  Carp: 0
+  Digest::MD5: 0
+  Fcntl: 0
+  File::Basename: 0
+  File::Temp: 0.15
+  Getopt::Long: 2.33
+  IO::Handle: 0
+  Pod::Usage: 0
+  overload: 0
+version: 1.24

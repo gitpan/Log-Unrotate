@@ -1,4 +1,7 @@
 package Log::Unrotate::Cursor::Null;
+BEGIN {
+  $Log::Unrotate::Cursor::Null::VERSION = '1.24';
+}
 
 use strict;
 use warnings;
@@ -6,6 +9,10 @@ use warnings;
 =head1 NAME
 
 Log::Unrotate::Cursor::Null - dummy cursor
+
+=head1 VERSION
+
+version 1.24
 
 =head1 DESCRIPTION
 
@@ -39,4 +46,3 @@ sub commit { return }
 sub clean { return }
 
 1;
-

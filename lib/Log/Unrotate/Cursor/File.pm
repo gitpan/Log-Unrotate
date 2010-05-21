@@ -1,4 +1,7 @@
 package Log::Unrotate::Cursor::File;
+BEGIN {
+  $Log::Unrotate::Cursor::File::VERSION = '1.24';
+}
 
 use strict;
 use warnings;
@@ -11,6 +14,10 @@ use overload '""' => sub { shift()->{file} };
 
 Log::Unrotate::Cursor::File - file keeping unrotate position
 
+=head1 VERSION
+
+version 1.24
+
 =head1 SYNOPSIS
 
     use Log::Unrotate::Cursor::File;
@@ -22,7 +29,7 @@ Log::Unrotate::Cursor::File - file keeping unrotate position
 
 use Fcntl qw(:flock);
 use Carp;
-use File::Temp;
+use File::Temp 0.15;
 use File::Basename;
 
 our %_lock_values = map { $_ => 1 } qw(none blocking nonblocking);
@@ -121,4 +128,3 @@ sub DESTROY {
 }
 
 1;
-

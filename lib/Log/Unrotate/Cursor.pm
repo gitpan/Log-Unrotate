@@ -1,4 +1,7 @@
 package Log::Unrotate::Cursor;
+BEGIN {
+  $Log::Unrotate::Cursor::VERSION = '1.24';
+}
 
 use strict;
 use warnings;
@@ -6,6 +9,10 @@ use warnings;
 =head1 NAME
 
 Log::Unrotate::Cursor - abstract unrotate cursor
+
+=head1 VERSION
+
+version 1.24
 
 =head1 DECRIPTION
 
@@ -55,4 +62,3 @@ Vyacheslav Matjukhin <mmcleric@yandex-team.ru>
 =cut
 
 1;
-
