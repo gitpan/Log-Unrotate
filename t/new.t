@@ -94,7 +94,7 @@ use strict;
 use warnings;
 use lib qw(lib);
 
-use Test::More tests => 79;
+use Test::More tests => 82;
 use Test::Exception;
 use Test::NoWarnings;
 use File::Copy qw();
@@ -109,7 +109,7 @@ sub reader ($;$) {
     my ($writer, $opts) = @_;
     $opts ||= {};
 
-    return new Log::Unrotate({
+    return Log::Unrotate->new({
         log => $writer->logfile(),
         pos => $writer->posfile(),
         %$opts,
@@ -118,7 +118,7 @@ sub reader ($;$) {
 
 # missing log (3)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     my $reader = reader($writer);
     lives_ok(sub { $reader->position() }, "Backstep successful on missing log");
     my $line = $reader->read();
@@ -129,7 +129,7 @@ sub reader ($;$) {
 
 # empty log (2)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->touch();
     my $reader = reader($writer);
     lives_ok(sub { $reader->position() }, "Backstep successful on missing previous log");
@@ -139,14 +139,14 @@ sub reader ($;$) {
 
 # open failures (2)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write('test1');
     chmod 0000, $writer->logfile or die "chmod failed: $!";
     throws_ok(sub { reader($writer) }, qr/exists but is unreadable/, 'constructor fails when log is unreadable');
     chmod 0644, $writer->logfile or die "chmod failed: $!";
     undef $writer;
 
-    $writer = new LogWriter;
+    $writer = LogWriter->new;
     $writer->write('test1');
     my $reader = reader($writer);
     $reader->commit;
@@ -158,7 +158,7 @@ sub reader ($;$) {
 
 # simple read (2)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     my $reader = reader($writer);
     my $line = $reader->read();
@@ -169,7 +169,7 @@ sub reader ($;$) {
 
 # commit and read (1)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     my $reader = reader($writer);
     $reader->read();
@@ -182,7 +182,7 @@ sub reader ($;$) {
 
 # posfile permissions (1)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     my $reader = reader($writer);
     $reader->read();
@@ -193,7 +193,7 @@ sub reader ($;$) {
 
 # commit twice (2)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     my $reader = reader($writer);
     $reader->read();
@@ -208,7 +208,7 @@ sub reader ($;$) {
 
 # commit position (1)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     $writer->write("test2");
     $writer->write("test3");
@@ -224,7 +224,7 @@ sub reader ($;$) {
 
 # read and rotation (3)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     $writer->write("test2");
     my $reader = reader($writer);
@@ -246,7 +246,7 @@ sub reader ($;$) {
 
 # commit, rotate and read (2)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     $writer->write("test2");
     my $reader = reader($writer);
@@ -261,7 +261,7 @@ sub reader ($;$) {
 
 # empty log rotation (1)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     my $reader = reader($writer);
     $reader->read();
@@ -279,7 +279,7 @@ sub reader ($;$) {
 
 # reading .log.1 when log is rotated (2)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     my $reader = reader($writer);
     $reader->read();
@@ -299,7 +299,7 @@ sub reader ($;$) {
 
 # ignoring files with garbage after log number (1)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     my $reader = reader($writer);
     $reader->read();
@@ -322,7 +322,7 @@ sub reader ($;$) {
 
 # position 0 issue (2)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     my $reader = reader($writer);
     $reader->read();
@@ -343,7 +343,7 @@ sub reader ($;$) {
 
 # check_inode flag (2)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     my $reader = reader($writer);
     $reader->read();
@@ -376,7 +376,7 @@ sub reader ($;$) {
 
 # end => "fixed" (1)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     my $reader = reader($writer, {end => "fixed"});
     $reader->read();
@@ -387,7 +387,7 @@ sub reader ($;$) {
 
 # end => "future" (2)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     my $reader = reader($writer, {end => "future"});
     $reader->read();
@@ -402,7 +402,7 @@ sub reader ($;$) {
 
 # incomplete lines (5)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     my $reader = reader($writer);
     $reader->read();
@@ -413,8 +413,7 @@ sub reader ($;$) {
     $writer->write_raw("test4");
     $reader = reader($writer);
     my $line = $reader->read();
-    is($line, "test2", "Read incomplete lines from rotated logs");
-    $reader->read();
+    is($line, "test3\n", "Skip incomplete lines from rotated logs");
     $line = $reader->read();
     is($line, undef, "Ignore incomplete line at the end of the last log");
     $reader->commit();
@@ -437,7 +436,7 @@ sub reader ($;$) {
 
 # 'unable to find' exception (2)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     my $reader = reader($writer);
     $reader->read();
@@ -465,7 +464,7 @@ sub reader ($;$) {
 
 # position() issues (4)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     $writer->write("test2");
     my $reader = reader($writer);
@@ -482,7 +481,7 @@ sub reader ($;$) {
     $writer->write("test3", 1);
     $reader = reader($writer);
     my $line = $reader->read();
-    is($line, "test3\n", "A rotated log may be updated till the new log is empty");
+    is($line, "test3\n", "A rotated log may be updated till the log ->newis empty");
 
     $reader->read();
     $reader->commit();
@@ -502,7 +501,7 @@ sub reader ($;$) {
 
 # start flag (3)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     $writer->rotate();
     $writer->write("test2");
@@ -520,7 +519,7 @@ sub reader ($;$) {
 
 # lag (3)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test0");
     $writer->write("test1");
     $writer->write("test2");
@@ -546,7 +545,7 @@ sub reader ($;$) {
 
 # exceptions (4)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     $writer->write("test2");
     $writer->write("test3");
@@ -568,7 +567,7 @@ sub reader ($;$) {
 
 # constructor (6)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     throws_ok(sub { reader($writer, { start => 'blah' }) }, qr/unknown start value/, 'constructor checks start value');
     throws_ok(sub { reader($writer, { end => 'blah' }) }, qr/unknown end value/, 'constructor checks end value');
     throws_ok(sub { reader($writer, { lock => 'blah' }) }, qr/unknown lock value/, 'constructor checks lock value');
@@ -579,7 +578,7 @@ sub reader ($;$) {
 
 # pos => "-" (1)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     my $reader = reader($writer, {pos => "-"});
     $reader->read();
@@ -593,14 +592,14 @@ sub reader ($;$) {
 {
     my $test1 = xqx(q#echo test1 | #.$^X.q# -Ilib -e '
     use Log::Unrotate;
-    $reader = new Log::Unrotate({pos => "-", log => "-", end => "future"});
+    $reader = Log::Unrotate->new({pos => "-", log => "-", end => "future"});
     print $reader->read()'#);
     is ($test1, "test1\n", 'log => "-" reads stdin');
 }
 
 # loooooong lines (2)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1"x10000);
     $writer->write("test2"x10000);
     my $reader = reader($writer);
@@ -616,7 +615,7 @@ sub reader ($;$) {
 
 # locks (5)
 {
-    my $writer = new LogWriter();
+    my $writer = LogWriter->new();
     my $reader = reader($writer, { lock => 'blocking' });
 
     lives_ok(sub { reader($writer) }, 'constructing second writer without locks lives');
@@ -638,7 +637,7 @@ sub reader ($;$) {
 
 # caching log in pos (4)
 {
-    my $writer = new LogWriter();
+    my $writer = LogWriter->new();
     $writer->write('abc');
     my $reader = reader($writer);
     $reader->commit;
@@ -664,7 +663,7 @@ sub reader ($;$) {
 
 # autofix_cursor (3)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     $writer->write("test2");
     $writer->write("test3");
@@ -690,7 +689,7 @@ sub reader ($;$) {
 
 # log_number (3)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     $writer->write("test2");
     $writer->write("test3");
@@ -712,7 +711,7 @@ sub reader ($;$) {
 
 # log_name (2)
 {
-    my $writer = new LogWriter;
+    my $writer = LogWriter->new;
     $writer->write("test1");
     $writer->write("test2");
     $writer->write("test3");
@@ -723,3 +722,22 @@ sub reader ($;$) {
     is($reader->log_name(), 'tfiles/test.log', "log_name() don't contain log number");
 }
 
+# missing log (3)
+{
+    my $writer = LogWriter->new;
+    $writer->write('test1');
+    $writer->write('test2');
+
+    my $reader = reader($writer);
+    is($reader->read, "test1\n");
+    $reader->commit;
+    undef $reader;
+
+    $writer->rotate;
+    $writer->rotate;
+    $writer->write('test3');
+
+    $reader = reader($writer);
+    is($reader->read, "test2\n");
+    is($reader->read, "test3\n");
+}

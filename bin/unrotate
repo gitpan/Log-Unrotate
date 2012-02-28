@@ -9,6 +9,10 @@ use Log::Unrotate;
 
 unrotate - reads lines from log using Log::Unrotate and given pos file
 
+=head1 VERSION
+
+version 1.26
+
 =head1 SYNOPSIS
 
 unrotate [-n 5] [-c] file.pos [file.log]
