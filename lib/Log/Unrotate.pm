@@ -1,6 +1,6 @@
 package Log::Unrotate;
 BEGIN {
-  $Log::Unrotate::VERSION = '1.26';
+  $Log::Unrotate::VERSION = '1.27';
 }
 
 use strict;
@@ -14,7 +14,7 @@ Log::Unrotate - Reader of rotated logs.
 
 =head1 VERSION
 
-version 1.26
+version 1.27
 
 =head1 SYNOPSIS
 
@@ -310,7 +310,7 @@ sub _start($)
     $self->{LogNumber} = 0;
     if ($self->{start} eq 'end') { # move to the end of file
         $self->_reopen(0);
-        $self->_seek_end_pos($self->{Handle});
+        $self->_seek_end_pos($self->{Handle}) if $self->{Handle};
     } elsif ($self->{start} eq 'begin') { # move to the beginning of last file
         $self->_reopen(0);
     } elsif ($self->{start} eq 'first') { # find oldest file
@@ -432,14 +432,14 @@ sub read($)
     my $line;
     while (1) {
         my $FILE = $self->{Handle};
-        return unless defined $FILE;
+        return undef unless defined $FILE;
         if (defined $self->{EOF} and $self->{LogNumber} == 0) {
             my $position = tell $FILE;
-            return if $position >= $self->{EOF};
+            return undef if $position >= $self->{EOF};
         }
         $line = $getline->($FILE);
         last if defined $line;
-        return unless $self->_find_log($self->position());
+        return undef unless $self->_find_log($self->position());
     }
 
     $self->{LastLine} = $line;

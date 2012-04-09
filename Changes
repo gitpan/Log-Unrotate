@@ -1,5 +1,9 @@
 Revision history for Log-Unrotate
 
+1.27    Mon Apr 09, 2012
+        * don't fail when log is empty and start => 'end'
+        * read returns undef in the list context
+
 1.26    Wed Feb 29, 2012
         * ignore all incomplete lines in rotated logs
         * fix missing logs handling

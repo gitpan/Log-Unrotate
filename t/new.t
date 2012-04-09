@@ -94,7 +94,7 @@ use strict;
 use warnings;
 use lib qw(lib);
 
-use Test::More tests => 82;
+use Test::More tests => 87;
 use Test::Exception;
 use Test::NoWarnings;
 use File::Copy qw();
@@ -242,6 +242,20 @@ sub reader ($;$) {
     $line = $reader->read();
     is($line, "test3\n", "Go on reading after a rotated file is over");
 
+}
+
+# read in list context (4)
+{
+    my $writer = LogWriter->new;
+    $writer->write("test1");
+    my $reader = reader($writer);
+    my @res = $reader->read;
+    is(scalar(@res), 1, 'read in list context');
+    is($res[0], "test1\n");
+
+    @res = $reader->read;
+    is(scalar(@res), 1, 'read in list context (no data)');
+    is($res[0], undef);
 }
 
 # commit, rotate and read (2)
@@ -502,10 +516,15 @@ sub reader ($;$) {
 # start flag (3)
 {
     my $writer = LogWriter->new;
+    $writer->touch();
+
+    my $reader = reader($writer, { start => 'end' });
+    is(scalar($reader->read), undef, "start => 'end' and the empty file");
+
     $writer->write("test1");
     $writer->rotate();
     $writer->write("test2");
-    my $reader = reader($writer, {start => "begin"});
+    $reader = reader($writer, {start => "begin"});
     my $line = $reader->read();
     is($line, "test2\n", "start => 'begin' interpreted properly");
     $reader = reader($writer, {start => "first"});
