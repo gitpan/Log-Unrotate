@@ -13,6 +13,7 @@ lib/Log/Unrotate/Cursor/File.pm
 lib/Log/Unrotate/Cursor/Null.pm
 t/Utils.pm
 t/bin.t
+t/cursor.t
 t/new.t
 t/pod.t
 t/pod_coverage.t

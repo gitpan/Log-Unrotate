@@ -1,6 +1,6 @@
 package Log::Unrotate::Cursor::File;
 BEGIN {
-  $Log::Unrotate::Cursor::File::VERSION = '1.27';
+  $Log::Unrotate::Cursor::File::VERSION = '1.28';
 }
 
 use strict;
@@ -16,7 +16,7 @@ Log::Unrotate::Cursor::File - file keeping unrotate position
 
 =head1 VERSION
 
-version 1.27
+version 1.28
 
 =head1 SYNOPSIS
 
@@ -33,6 +33,13 @@ use File::Temp 0.15;
 use File::Basename;
 
 our %_lock_values = map { $_ => 1 } qw(none blocking nonblocking);
+our %_text2field = (
+    position => 'Position',
+    logfile => 'LogFile',
+    inode => 'Inode',
+    lastline => 'LastLine',
+    committime => 'CommitTime',
+);
 
 =over
 
@@ -43,7 +50,10 @@ our %_lock_values = map { $_ => 1 } qw(none blocking nonblocking);
 Construct cursor from file.
 
 C<$options> is an optional hashref.
-Only one option I<lock> is supported, describing locking behaviour. See C<Log::Unrotate> for details.
+I<lock> option describes locking behaviour. See C<Log::Unrotate> for details.
+I<rollback_period> option defines target rollback time in seconds.If 0,
+rollback behaviour will be off.
+
 
 =cut
 sub new {
@@ -51,12 +61,18 @@ sub new {
     croak "No file specified" unless defined $file;
 
     my $lock = 'none';
+    my $rollback;
     if ($options) {
         $lock = $options->{lock};
+        $rollback = $options->{rollback_period};
     }
     croak "unknown lock value: '$lock'" unless $_lock_values{$lock};
+    croak "wrong rollback_period: '$rollback'" if ($rollback and $rollback !~ /^\d+$/);
 
-    my $self = bless { file => $file } => $class;
+    my $self = bless {
+        file => $file,
+        rollback => $rollback,
+    } => $class;
 
     unless ($lock eq 'none') {
         # locks
@@ -71,38 +87,86 @@ sub new {
             flock $self->{lock_fh}, LOCK_EX | LOCK_NB or croak "Failed to obtain lock: $!";
         }
     }
+
+    $self->{positions} = $self->_read_file_fully();
+
     return $self;
+}
+
+sub _read_file_fully {
+    my ($self) = @_;
+
+    my $file = $self->{file};
+    return unless -e $file;
+
+    open my $fh, '<', $file or die "Can't open '$file': $!";
+    my $content = do {local $/; <$fh>};
+
+    my @poss = ();
+    my $pos = {};
+    for my $line (split /\n/, $content) {
+        if ($line =~ /^\s*(inode|committime|position):\s*(\d+)/) {
+            my $field = $_text2field{$1};
+            if (defined $pos->{$field}) {
+                die "Some pos-file inconsistency: '$field' defined twice";
+            }
+            $pos->{$field} = $2;
+        } elsif ($line =~ /^\s*(logfile|lastline):\s(.*)/) {
+            my $field = $_text2field{$1};
+            if (defined $pos->{$field}) {
+                die "Some pos-file inconsistency: '$field' defined twice";
+            }
+            $pos->{$field} = $2;
+        } elsif ($line =~ /^###$/) {
+            die "missing 'position:' in $file" unless defined $pos->{Position};
+            push @poss, $pos;
+            $pos = {};
+        }
+    }
+    if ($pos && scalar keys %$pos) {
+        die "missing 'position:' in $file" unless defined $pos->{Position};
+        push @poss, $pos;
+    }
+    die "missing 'position:' in $file" unless scalar @poss;
+
+    return \@poss;
 }
 
 sub read {
     my $self = shift;
-    return unless -e $self->{file};
-
-    open my $fh, '<', $self->{file} or die "Can't open '$self->{file}': $!";
-    my $pos = {};
-    my $content = do {local $/; <$fh>};
-    $content =~ /position:\s*(\d+)/ and $pos->{Position} = $1;
-    die "missing 'position:' in $self->{file}" unless defined $pos->{Position};
-    $content =~ /inode:\s*(\d+)/ and $pos->{Inode} = $1;
-    $content =~ /lastline:\s(.*)/ and $pos->{LastLine} = $1;
-    $content =~ /logfile:\s(.*)/ and $pos->{LogFile} = $1;
-    return $pos;
+    return undef unless defined $self->{positions};
+    return {%{$self->{positions}->[0]}};
 }
 
-sub commit($$) {
-    my ($self, $pos) = @_;
+sub _save_positions {
+    my ($self, $poss) = @_;
 
-    return unless defined $pos->{Position}; # pos is missing and log either => do nothing
+    $self->{positions} = [ map { {%$_} } @$poss ];
 
     my $fh = File::Temp->new(DIR => dirname($self->{file}));
 
-    $fh->print("logfile: $pos->{LogFile}\n");
-    $fh->print("position: $pos->{Position}\n");
-    if ($pos->{Inode}) {
-        $fh->print("inode: $pos->{Inode}\n");
-    }
-    if ($pos->{LastLine}) {
-        $fh->print("lastline: $pos->{LastLine}\n");
+    my $first = 1;
+    for my $pos (@{$self->{positions}}) {
+        $fh->print("###\n") unless $first;
+        $first = 0;
+        $fh->print("logfile: $pos->{LogFile}\n");
+        $fh->print("position: $pos->{Position}\n");
+        if ($pos->{Inode}) {
+            $fh->print("inode: $pos->{Inode}\n");
+        }
+        if ($pos->{LastLine}) {
+            $fh->print("lastline: $pos->{LastLine}\n");
+        }
+        $pos->{CommitTime} ||= time;
+        $fh->print("committime: $pos->{CommitTime}\n");
+
+        my @to_clean;
+        for my $field (keys %$pos) {
+            unless (grep { $_ eq $field } values %_text2field) {
+                push @to_clean, $field;
+            }
+        }
+        delete @{$pos}{@to_clean} if (scalar @to_clean);
     }
     $fh->flush;
     if ($fh->error) {
@@ -114,10 +178,54 @@ sub commit($$) {
     $fh->unlink_on_destroy(0);
 }
 
+sub _commit_with_backups($$) {
+    my ($self, $pos) = @_;
+
+    my $time = time;
+
+    my $poss = $self->{positions};
+    unless ($poss) {
+        $self->_save_positions([$pos]);
+        return;
+    }
+
+    my @times = map { $time - ($_->{CommitTime} || $time) } @$poss;
+    my @new_poss = ();
+    if ($times[0] > $self->{rollback} || scalar @times == 1) {
+        @new_poss = ($pos, $poss->[0]);
+    } elsif ($times[1] <= $self->{rollback}) {
+        @new_poss = @$poss;
+        $new_poss[0] = $pos;
+    } elsif ($times[1] > $self->{rollback}) {
+        @new_poss = ($pos, $poss->[0], $poss->[1]);
+    }
+    $self->_save_positions(\@new_poss);
+}
+
+sub commit($$) {
+    my ($self, $pos) = @_;
+
+    return unless defined $pos->{Position}; # pos is missing and log either => do nothing
+    return $self->_commit_with_backups($pos) if ($self->{rollback});
+
+    $self->_save_positions([$pos]);
+}
+
+sub rollback {
+    my ($self) = @_;
+
+    return 0 unless $self->{positions};
+    return 0 unless scalar @{$self->{positions}} > 1;
+
+    shift @{$self->{positions}};
+    return 1;
+}
+
 sub clean($) {
     my ($self) = @_;
     return unless -e $self->{file};
     unlink $self->{file} or die "Can't remove $self->{file}: $!";
+    $self->{positions} = undef;
 }
 
 sub DESTROY {

@@ -1,6 +1,6 @@
 package Log::Unrotate::Cursor::Null;
 BEGIN {
-  $Log::Unrotate::Cursor::Null::VERSION = '1.27';
+  $Log::Unrotate::Cursor::Null::VERSION = '1.28';
 }
 
 use strict;
@@ -12,7 +12,7 @@ Log::Unrotate::Cursor::Null - dummy cursor
 
 =head1 VERSION
 
-version 1.27
+version 1.28
 
 =head1 DESCRIPTION
 

@@ -1,5 +1,10 @@
 Revision history for Log-Unrotate
 
+1.28    Tue May 15, 2012
+        * autofix pos-files using rollback
+        * fix problem with pos-file parsing regexps
+        * cursor tests
+
 1.27    Mon Apr 09, 2012
         * don't fail when log is empty and start => 'end'
         * read returns undef in the list context

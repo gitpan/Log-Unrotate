@@ -1,6 +1,6 @@
 package Log::Unrotate::Cursor;
 BEGIN {
-  $Log::Unrotate::Cursor::VERSION = '1.27';
+  $Log::Unrotate::Cursor::VERSION = '1.28';
 }
 
 use strict;
@@ -12,7 +12,7 @@ Log::Unrotate::Cursor - abstract unrotate cursor
 
 =head1 VERSION
 
-version 1.27
+version 1.28
 
 =head1 DECRIPTION
 
@@ -51,6 +51,18 @@ Clean all data from cursor.
 =cut
 sub clean($) {
     die 'not implemented';
+}
+
+=item B<rollback()>
+
+Rollback cursor to some previous value.
+
+Returns 1 on success, 0 on fail.
+
+=cut
+
+sub rollback($) {
+    return 0;
 }
 
 =back

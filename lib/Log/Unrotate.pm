@@ -1,6 +1,6 @@
 package Log::Unrotate;
 BEGIN {
-  $Log::Unrotate::VERSION = '1.27';
+  $Log::Unrotate::VERSION = '1.28';
 }
 
 use strict;
@@ -14,7 +14,7 @@ Log::Unrotate - Reader of rotated logs.
 
 =head1 VERSION
 
-version 1.27
+version 1.28
 
 =head1 SYNOPSIS
 
@@ -62,6 +62,7 @@ sub _defaults ($) {
         check_lastline => 1,
         check_log => 0,
         autofix_cursor => 0,
+        rollback_period => 300,
     };
 }
 
@@ -95,6 +96,13 @@ Instead of C<pos> file, you can specify any custom cursor. See C<Log::Unrotate::
 Recreate cursor if it's broken.
 
 Warning will be printed. This option is dangerous and shouldn't be enabled light-heartedly.
+
+=item I<rollback_period>
+
+Time period in seconds. When > 0 tells C<commit> method to save some positions history (at least one previous position older then I<rollback_period> would be preserved) 
+to allow recovery when the last position is somewhy broken. Position may sometimes become invalid because of machine hard reboot.
+
+The feature is enabled by default (value 300), set to 0 to disable.
 
 =item I<log>
 
@@ -194,7 +202,7 @@ sub new ($$)
         }
         else {
             croak "Log not specified and posfile is not found" if not defined $self->{log} and not -e $posfile;
-            $self->{cursor} = Log::Unrotate::Cursor::File->new($posfile, { lock => $self->{lock} });
+            $self->{cursor} = Log::Unrotate::Cursor::File->new($posfile, { lock => $self->{lock}, rollback_period => $self->{rollback_period} });
         }
     }
 
@@ -212,19 +220,25 @@ sub new ($$)
     $self->_set_eof();
 
     if ($pos) {
-        my $found = eval {
-            $self->_find_log($pos);
-            1;
-        };
-        unless ($found) {
+        my $error;
+        while () {
+            eval {
+                $self->_find_log($pos);
+            };
+            $error = $@;
+            last unless $error;
+            last unless $self->{cursor}->rollback();
+            $pos = $self->{cursor}->read();
+        }
+        if ($error) {
             if ($self->{autofix_cursor}) {
-                warn $@;
+                warn $error;
                 warn "autofix_cursor is enabled, cleaning $self->{cursor}";
                 $self->{cursor}->clean();
                 $self->_start();
             }
             else {
-                die $@;
+                die $error;
             }
         }
     } else {
