@@ -1,5 +1,8 @@
 Revision history for Log-Unrotate
 
+1.29    Tue May 07, 2013
+        * speed up read() by 30% by inlining the $getline->() call
+
 1.28    Tue May 15, 2012
         * autofix pos-files using rollback
         * fix problem with pos-file parsing regexps

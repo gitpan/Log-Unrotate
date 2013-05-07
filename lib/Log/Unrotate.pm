@@ -1,6 +1,6 @@
 package Log::Unrotate;
 BEGIN {
-  $Log::Unrotate::VERSION = '1.28';
+  $Log::Unrotate::VERSION = '1.29';
 }
 
 use strict;
@@ -14,7 +14,7 @@ Log::Unrotate - Reader of rotated logs.
 
 =head1 VERSION
 
-version 1.28
+version 1.29
 
 =head1 SYNOPSIS
 
@@ -428,20 +428,8 @@ sub _find_log ($$)
 Read a string from the file I<log>.
 
 =cut
-sub read($)
-{
-    my ($self) = @_;
-
-    my $getline = sub {
-        my $fh = shift;
-        my $line = <$fh>;
-        return unless defined $line;
-        unless ($line =~ /\n$/) {
-            seek $fh, - length $line, SEEK_CUR;
-            return undef;
-        }
-        return $line;
-    };
+sub read {
+    my $self = shift;
 
     my $line;
     while (1) {
@@ -451,8 +439,13 @@ sub read($)
             my $position = tell $FILE;
             return undef if $position >= $self->{EOF};
         }
-        $line = $getline->($FILE);
-        last if defined $line;
+        $line = <$FILE>;
+        if (defined $line) {
+            if ($line =~ /\n$/) {
+                last;
+            }
+            seek $FILE, - length $line, SEEK_CUR;
+        }
         return undef unless $self->_find_log($self->position());
     }
 
