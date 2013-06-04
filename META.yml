@@ -1,5 +1,5 @@
 ---
-abstract: 'Reader of rotated logs.'
+abstract: 'Incremental log reader with a transparent rotation handling'
 author:
   - 'Andrei Mishchenko <druxa@yandex-team.ru>'
   - 'Vyacheslav Matjukhin <mmcleric@yandex-team.ru>'
@@ -11,9 +11,9 @@ build_requires:
   Test::More: 0
   Test::NoWarnings: 0
 configure_requires:
-  ExtUtils::MakeMaker: 6.31
+  ExtUtils::MakeMaker: 6.30
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 4.200004, CPAN::Meta::Converter version 2.112621'
+generated_by: 'Dist::Zilla version 4.300034, CPAN::Meta::Converter version 2.130880'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -28,5 +28,8 @@ requires:
   Getopt::Long: 2.33
   IO::Handle: 0
   Pod::Usage: 0
+  base: 0
   overload: 0
-version: 1.29
+  strict: 0
+  warnings: 0
+version: 1.30

@@ -1,6 +1,6 @@
 package Log::Unrotate::Cursor;
-BEGIN {
-  $Log::Unrotate::Cursor::VERSION = '1.29';
+{
+  $Log::Unrotate::Cursor::VERSION = '1.30';
 }
 
 use strict;
@@ -8,17 +8,17 @@ use warnings;
 
 =head1 NAME
 
-Log::Unrotate::Cursor - abstract unrotate cursor
+Log::Unrotate::Cursor - abstract class for unrotate cursors
 
 =head1 VERSION
 
-version 1.29
+version 1.30
 
 =head1 DECRIPTION
 
 C<Log::Unrotate> keeps its position in persistent objects called cursors.
 
-See C<Log::Unrotate::Cursor::File> for default cursor implementation.
+See C<Log::Unrotate::Cursor::File> for the default cursor implementation.
 
 =head1 METHODS
 
@@ -26,9 +26,9 @@ See C<Log::Unrotate::Cursor::File> for default cursor implementation.
 
 =item B<read()>
 
-Get hashref with position data.
+Get the hashref with a position data.
 
-Data usually contains I<Position>, I<Inode>, I<LastLine> and I<LogFile> keys.
+Data usually includes I<Position>, I<Inode>, I<LastLine> and I<LogFile> keys.
 
 =cut
 sub read($) {
@@ -37,7 +37,7 @@ sub read($) {
 
 =item B<commit($position)>
 
-Save new position into cursor.
+Save a new position into the cursor.
 
 =cut
 sub commit($$) {
@@ -46,7 +46,7 @@ sub commit($$) {
 
 =item B<clean()>
 
-Clean all data from cursor.
+Clean all data from the cursor.
 
 =cut
 sub clean($) {
@@ -55,7 +55,7 @@ sub clean($) {
 
 =item B<rollback()>
 
-Rollback cursor to some previous value.
+Rollback the cursor to some previous value.
 
 Returns 1 on success, 0 on fail.
 
@@ -66,10 +66,6 @@ sub rollback($) {
 }
 
 =back
-
-=head1 AUTHOR
-
-Vyacheslav Matjukhin <mmcleric@yandex-team.ru>
 
 =cut
 

@@ -1,6 +1,6 @@
 package Log::Unrotate::Cursor::File;
-BEGIN {
-  $Log::Unrotate::Cursor::File::VERSION = '1.29';
+{
+  $Log::Unrotate::Cursor::File::VERSION = '1.30';
 }
 
 use strict;
@@ -16,7 +16,7 @@ Log::Unrotate::Cursor::File - file keeping unrotate position
 
 =head1 VERSION
 
-version 1.29
+version 1.30
 
 =head1 SYNOPSIS
 
@@ -47,13 +47,13 @@ our %_text2field = (
 
 =item B<new($file)>
 
-Construct cursor from file.
+Construct the cursor from the file.
 
 C<$options> is an optional hashref.
-I<lock> option describes locking behaviour. See C<Log::Unrotate> for details.
-I<rollback_period> option defines target rollback time in seconds.If 0,
-rollback behaviour will be off.
 
+I<lock> option describes the locking behavior. See C<Log::Unrotate> for details.
+
+I<rollback_period> option defines the target rollback time in seconds. If 0, rollback behaviour will be off.
 
 =cut
 sub new {

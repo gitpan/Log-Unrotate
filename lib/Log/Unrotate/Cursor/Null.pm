@@ -1,6 +1,6 @@
 package Log::Unrotate::Cursor::Null;
-BEGIN {
-  $Log::Unrotate::Cursor::Null::VERSION = '1.29';
+{
+  $Log::Unrotate::Cursor::Null::VERSION = '1.30';
 }
 
 use strict;
@@ -8,11 +8,11 @@ use warnings;
 
 =head1 NAME
 
-Log::Unrotate::Cursor::Null - dummy cursor
+Log::Unrotate::Cursor::Null - dummy unrotate cursor
 
 =head1 VERSION
 
-version 1.29
+version 1.30
 
 =head1 DESCRIPTION
 
@@ -30,7 +30,7 @@ use overload '""' => sub { 'Null' };
 
 =item B<new()>
 
-Create null cursor.
+Create a null cursor.
 
 =cut
 sub new {

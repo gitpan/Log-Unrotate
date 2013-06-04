@@ -1,9 +1,9 @@
 
 
 This archive contains the distribution Log-Unrotate,
-version 1.29:
+version 1.30:
 
-  Reader of rotated logs.
+  Incremental log reader with a transparent rotation handling
 
 This software is copyright (c) 2013 by Yandex LLC.
 
