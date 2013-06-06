@@ -1,6 +1,6 @@
 package Log::Unrotate::Cursor;
 {
-  $Log::Unrotate::Cursor::VERSION = '1.30';
+  $Log::Unrotate::Cursor::VERSION = '1.31';
 }
 
 use strict;
@@ -12,7 +12,7 @@ Log::Unrotate::Cursor - abstract class for unrotate cursors
 
 =head1 VERSION
 
-version 1.30
+version 1.31
 
 =head1 DECRIPTION
 

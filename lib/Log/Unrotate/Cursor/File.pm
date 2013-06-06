@@ -1,6 +1,6 @@
 package Log::Unrotate::Cursor::File;
 {
-  $Log::Unrotate::Cursor::File::VERSION = '1.30';
+  $Log::Unrotate::Cursor::File::VERSION = '1.31';
 }
 
 use strict;
@@ -16,7 +16,7 @@ Log::Unrotate::Cursor::File - file keeping unrotate position
 
 =head1 VERSION
 
-version 1.30
+version 1.31
 
 =head1 SYNOPSIS
 
@@ -47,7 +47,7 @@ our %_text2field = (
 
 =item B<new($file)>
 
-Construct the cursor from the file.
+Construct a cursor from the file.
 
 C<$options> is an optional hashref.
 
@@ -234,5 +234,9 @@ sub DESTROY {
         flock $self->{lock_fh}, LOCK_UN;
     }
 }
+
+=back
+
+=cut
 
 1;

@@ -1,6 +1,6 @@
 package Log::Unrotate;
 {
-  $Log::Unrotate::VERSION = '1.30';
+  $Log::Unrotate::VERSION = '1.31';
 }
 
 use strict;
@@ -12,7 +12,7 @@ Log::Unrotate - Incremental log reader with a transparent rotation handling
 
 =head1 VERSION
 
-version 1.30
+version 1.31
 
 =head1 SYNOPSIS
 
@@ -83,7 +83,7 @@ our %_end_values = map { $_ => 1 } qw(fixed future);
 
 =item B<< new($params) >>
 
-Creates the new unrotate object.
+Creates a new unrotate object.
 
 =over
 
