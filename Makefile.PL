@@ -11,7 +11,15 @@ use ExtUtils::MakeMaker 6.30;
 my %WriteMakefileArgs = (
   "ABSTRACT" => "Incremental log reader with a transparent rotation handling",
   "AUTHOR" => "Andrei Mishchenko <druxa\@yandex-team.ru>, Vyacheslav Matjukhin <mmcleric\@yandex-team.ru>",
-  "BUILD_REQUIRES" => {},
+  "BUILD_REQUIRES" => {
+    "Exporter" => 0,
+    "File::Copy" => 0,
+    "File::Path" => 0,
+    "File::stat" => 0,
+    "Test::Exception" => 0,
+    "Test::More" => 0,
+    "Test::NoWarnings" => 0
+  },
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => "6.30"
   },
@@ -35,33 +43,12 @@ my %WriteMakefileArgs = (
     "strict" => 0,
     "warnings" => 0
   },
-  "TEST_REQUIRES" => {
-    "Exporter" => 0,
-    "File::Copy" => 0,
-    "File::Path" => 0,
-    "Test::Exception" => 0,
-    "Test::More" => 0,
-    "Test::NoWarnings" => 0
-  },
-  "VERSION" => "1.31",
+  "VERSION" => "1.32",
   "test" => {
     "TESTS" => "t/*.t"
   }
 );
 
-
-unless ( eval { ExtUtils::MakeMaker->VERSION(6.63_03) } ) {
-  my $tr = delete $WriteMakefileArgs{TEST_REQUIRES};
-  my $br = $WriteMakefileArgs{BUILD_REQUIRES};
-  for my $mod ( keys %$tr ) {
-    if ( exists $br->{$mod} ) {
-      $br->{$mod} = $tr->{$mod} if $tr->{$mod} > $br->{$mod};
-    }
-    else {
-      $br->{$mod} = $tr->{$mod};
-    }
-  }
-}
 
 unless ( eval { ExtUtils::MakeMaker->VERSION(6.56) } ) {
   my $br = delete $WriteMakefileArgs{BUILD_REQUIRES};

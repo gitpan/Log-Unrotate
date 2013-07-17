@@ -1,6 +1,6 @@
 package Log::Unrotate::Cursor::File;
 {
-  $Log::Unrotate::Cursor::File::VERSION = '1.31';
+  $Log::Unrotate::Cursor::File::VERSION = '1.32';
 }
 
 use strict;
@@ -16,7 +16,7 @@ Log::Unrotate::Cursor::File - file keeping unrotate position
 
 =head1 VERSION
 
-version 1.31
+version 1.32
 
 =head1 SYNOPSIS
 
@@ -187,6 +187,10 @@ sub _commit_with_backups($$) {
     unless ($poss) {
         $self->_save_positions([$pos]);
         return;
+    }
+
+    if ($poss->[0]->{Position} == $pos->{Position} && $poss->[0]->{LastLine} eq $pos->{LastLine} && $poss->[0]->{Inode} == $pos->{Inode}) {
+        return; # same position! do not write anything!
     }
 
     my @times = map { $time - ($_->{CommitTime} || $time) } @$poss;

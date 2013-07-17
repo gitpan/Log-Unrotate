@@ -1,6 +1,6 @@
 package Log::Unrotate;
 {
-  $Log::Unrotate::VERSION = '1.31';
+  $Log::Unrotate::VERSION = '1.32';
 }
 
 use strict;
@@ -12,7 +12,7 @@ Log::Unrotate - Incremental log reader with a transparent rotation handling
 
 =head1 VERSION
 
-version 1.31
+version 1.32
 
 =head1 SYNOPSIS
 
